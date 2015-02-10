@@ -1,9 +1,16 @@
+<!--
+This example highlights the problem of multiple instances being suitable for auto-wiring.
+The expected behaviour is both consumers are wired to the first producer,
+but in terms of Principle of Least Astonishment it might be better if this threw an
+exception by default (assuming the user has done this by accident), and only by
+setting a flag will it actually go ahead an autowire?
+-->
 <container>
 
-    <producer />
-    <producer />
+    <producer/>
+    <producer/>
 
-    <consumer />
-    <consumer />
+    <consumer/>
+    <consumer/>
 
 </container>

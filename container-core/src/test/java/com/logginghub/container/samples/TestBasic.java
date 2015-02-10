@@ -20,7 +20,7 @@ public class TestBasic {
         ContainerXMLLoader loader = new ContainerXMLLoader();
         loader.addClassnameResolutionPackage("com.logginghub.container.samples");
 
-        Container container = loader.load("/samples/basic.xml");
+        Container container = loader.loadFromResource("samples/basic.xml");
 
         validate(container);
     }
@@ -31,7 +31,7 @@ public class TestBasic {
         ContainerJSONLoader loader = new ContainerJSONLoader();
         loader.addClassnameResolutionPackage("com.logginghub.container.samples");
 
-        Container container = loader.load("/samples/basic.json");
+        Container container = loader.loadFromResource("samples/basic.json");
 
         validate(container);
     }
@@ -53,11 +53,11 @@ public class TestBasic {
         assertThat(container.getModules().size(), is(2));
 
         // Producer will be first because we can't instantiate Consumer without it
-        assertThat(container.getModules().get(0), is(instanceOf(Producer.class)));
-        assertThat(container.getModules().get(1), is(instanceOf(Consumer.class)));
+        assertThat(container.getModules().get(0).getInstance(), is(instanceOf(Producer.class)));
+        assertThat(container.getModules().get(1).getInstance(), is(instanceOf(Consumer.class)));
 
-        Producer producer = (Producer) container.getModules().get(0);
-        Consumer consumer = (Consumer) container.getModules().get(1);
+        Producer producer = (Producer) container.getModules().get(0).getInstance();
+        Consumer consumer = (Consumer) container.getModules().get(1).getInstance();
 
         // Verify they have been correctly bound
         assertThat(consumer.getEvents().size(), is(0));

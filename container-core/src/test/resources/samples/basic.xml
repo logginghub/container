@@ -1,3 +1,7 @@
+<!--
+The most basic auto-wiring example, Consumer requires a Producer in its constructor,
+and there is only a single Producer instance available inside the Container.
+-->
 <container>
 
     <producer />

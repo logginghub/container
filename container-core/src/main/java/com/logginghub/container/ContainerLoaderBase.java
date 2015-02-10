@@ -1,19 +1,22 @@
 package com.logginghub.container;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by james on 10/02/15.
  */
 public abstract class ContainerLoaderBase implements ContainerLoader {
-    private List<String> packagePrefixes = new ArrayList<String>();
+
+    private Instantiator instantiator = new Instantiator();
 
     public void addClassnameResolutionPackage(String packagePrefix) {
-        packagePrefixes.add(packagePrefix);
+        instantiator.addClassnameResolutionPackage(packagePrefix);
     }
 
     public void removeClassnameResolutionPackage(String packagePrefix) {
-        packagePrefixes.remove(packagePrefix);
+        instantiator.removeClassnameResolutionPackage(packagePrefix);
     }
+
+    protected void instantiate(Container container) {
+        instantiator.instantiate(container);
+    }
+
 }

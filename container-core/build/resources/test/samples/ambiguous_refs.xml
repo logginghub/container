@@ -1,3 +1,9 @@
+<!--
+This example is a variation of ambiguous.xml with the additional id and ref fields
+required to make the auto-wiring explicit for two pairs of collaborators.
+
+(The producerRef is dynamically discovered using the classname of the first argument to the Consumer class.)
+-->
 <container>
 
     <producer />
