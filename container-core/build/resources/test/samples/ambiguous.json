@@ -1,0 +1,6 @@
+{ "container" : [
+  "producer",
+  "producer",
+  "consumer",
+  "consumer"
+] }

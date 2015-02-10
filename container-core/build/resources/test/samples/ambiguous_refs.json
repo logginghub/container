@@ -1,0 +1,7 @@
+{ "container" : [
+  { "producer" : {}} ,
+  { "producer" : {"id": "producer2"}} ,
+  { "consumer" : {}} ,
+  { "consumer" : {"id": "consumer2", "producerRef": "producer2"}}
+] }
+

@@ -1,0 +1,19 @@
+subprojects {
+
+    version = '0.0.1'
+    group = 'com.logginghub'
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'maven'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.11'
+        testCompile 'org.hamcrest:hamcrest-all:1.3'
+        testCompile 'org.mockito:mockito-all:1.9.5'
+    }
+}

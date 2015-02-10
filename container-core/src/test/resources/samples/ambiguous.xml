@@ -1,0 +1,9 @@
+<container>
+
+    <producer />
+    <producer />
+
+    <consumer />
+    <consumer />
+
+</container>

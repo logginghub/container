@@ -1,0 +1,11 @@
+<container>
+
+    <complexProducer>
+        <append value="a"/>
+        <append value="b"/>
+        <prepend value="c"/>
+    </complexProducer>
+
+    <consumer/>
+
+</container>
