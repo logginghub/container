@@ -9,13 +9,19 @@ import java.util.List;
 public class Consumer {
 
     private List<String> events = new ArrayList<String>();
+    private Producer producer;
 
     public Consumer(Producer producer) {
+        this.producer = producer;
         producer.addListener(new Producer.Listener() {
             @Override public void onEvent(String produced) {
                 events.add(produced);
             }
         });
+    }
+
+    public Producer getProducer() {
+        return producer;
     }
 
     public List<String> getEvents() {

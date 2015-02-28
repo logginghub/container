@@ -33,21 +33,43 @@ public class ContainerJSONLoader extends ContainerLoaderBase {
         Container container = new Container();
 
         final JsonArray modules = containerObject.getAsJsonArray("container");
-        for (JsonElement module : modules) {
+        for (JsonElement moduleElement : modules) {
 
-            if (module.isJsonObject()) {
-                final JsonObject moduleAsJsonObject = module.getAsJsonObject();
+            if (moduleElement.isJsonObject()) {
+                final JsonObject moduleAsJsonObject = moduleElement.getAsJsonObject();
 
                 final Set<Map.Entry<String, JsonElement>> entries = moduleAsJsonObject.entrySet();
-                if(entries.size() == 1) {
-                    container.add(new Module(entries.iterator().next().getKey()));
-                }else{
+                if (entries.size() == 1) {
+                    Map.Entry<String, JsonElement> next = entries.iterator().next();
+
+                    Module module = new Module(next.getKey());
+                    container.add(module);
+
+                    JsonElement value = next.getValue();
+                    if (value.isJsonObject()) {
+                        JsonObject valueObject = value.getAsJsonObject();
+
+                        Set<Map.Entry<String, JsonElement>> attributes = valueObject.entrySet();
+                        for (Map.Entry<String, JsonElement> attribute : attributes) {
+
+                            String attributeKey = attribute.getKey();
+                            String attributeValue = attribute.getValue().getAsString();
+
+                            if ("id".equals(attributeKey)) {
+                                module.setId(attributeValue);
+                            }
+
+                            module.addAttribute(attributeKey, attributeValue);
+                        }
+                    }
+
+                } else {
                     // TODO : make these more descriptive!
                     throw new ContainerException(String.format("Unexpected json format"));
                 }
 
-            } else if (module.isJsonPrimitive()) {
-                container.add(new Module(module.getAsString()));
+            } else if (moduleElement.isJsonPrimitive()) {
+                container.add(new Module(moduleElement.getAsString()));
             } else {
                 // TODO : make these more descriptive!
                 throw new ContainerException(String.format("Unexpected array element, wasn't an object or primative"));

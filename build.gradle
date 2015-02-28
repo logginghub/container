@@ -1,6 +1,10 @@
+
+
+String buildVersion = '0.0.2';
+
 subprojects {
 
-    version = '0.0.1'
+    version = buildVersion
     group = 'com.logginghub'
 
     apply plugin: 'java'
@@ -16,4 +20,6 @@ subprojects {
         testCompile 'org.hamcrest:hamcrest-all:1.3'
         testCompile 'org.mockito:mockito-all:1.9.5'
     }
+
+
 }

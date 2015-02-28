@@ -1,0 +1,15 @@
+<container>
+
+
+    <messageProducer id="web"/>
+
+    <messageConsumer id="db"/>
+
+    <messageConsumer id="cache" writeThroughTo="db"/>
+
+    <messageRouter>
+        <route messageProducerRef="web" messageConsumerRef="cache" urlStartsWith="/route1/"/>
+        <route messageProducerRef="web" messageConsumerRef="db" urlStartsWith="/route2/"/>
+    </messageRouter>
+
+</container>

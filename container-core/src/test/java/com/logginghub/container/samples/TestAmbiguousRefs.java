@@ -36,7 +36,7 @@ public class TestAmbiguousRefs {
 
         loader.addModule("producer");
         loader.addModule("producer").id("producer2");
-        loader.addModule("consumer").id("consumer1");
+        loader.addModule("consumer");
         loader.addModule("consumer").id("consumer2").attribute("producerRef", "producer2");
 
         Container container = loader.load();
@@ -54,13 +54,16 @@ public class TestAmbiguousRefs {
 
         assertThat(container.getModules().get(0).getId(), is(nullValue()));
         assertThat(container.getModules().get(1).getId(), is("producer2"));
-        assertThat(container.getModules().get(2).getId(), is("consumer1"));
+        assertThat(container.getModules().get(2).getId(), is(nullValue()));
         assertThat(container.getModules().get(3).getId(), is("consumer2"));
 
         Producer producerA = (Producer) container.getModules().get(0).getInstance();
         Producer producerB = (Producer) container.getModules().get(1).getInstance();
         Consumer consumerA = (Consumer) container.getModules().get(2).getInstance();
         Consumer consumerB = (Consumer) container.getModules().get(3).getInstance();
+
+        assertThat(consumerA.getProducer(), is(producerA));
+        assertThat(consumerB.getProducer(), is(producerB));
 
         assertThat(consumerA.getEvents().size(), is(0));
         assertThat(consumerB.getEvents().size(), is(0));
