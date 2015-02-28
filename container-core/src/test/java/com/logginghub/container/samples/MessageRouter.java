@@ -37,10 +37,6 @@ public class MessageRouter extends MessageConsumer {
 
     }
 
-    public List<Route> getRoutes() {
-        return routes;
-    }
-
     @Override
     public String consume(Message message) {
 
