@@ -1,0 +1,9 @@
+<container>
+
+    <producer />
+
+    <importContainerFile>samples/basic_import_1b.xml</importContainerFile>
+
+    <consumer />
+
+</container>

@@ -1,4 +1,9 @@
-package com.logginghub.container;
+package com.logginghub.container.loader;
+
+import com.logginghub.container.Container;
+import com.logginghub.container.ContainerException;
+import com.logginghub.container.ContainerParam;
+import com.logginghub.container.Module;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -12,7 +17,7 @@ import java.util.Map;
 /**
  * Created by james on 10/02/15.
  */
-public class Instantiator {
+public class PojoInstantiator implements Instantiator {
 
     private List<String> packagePrefixes = new ArrayList<String>();
 
@@ -63,7 +68,6 @@ public class Instantiator {
                 progress = true;
             }
         }
-
     }
 
     private Object createInstance(Class<?> clazz, Module module, List<Module> potentialCollaborators) {

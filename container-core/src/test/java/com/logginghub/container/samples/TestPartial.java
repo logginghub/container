@@ -20,10 +20,10 @@ public class TestPartial {
         Container container = new Container();
 
         // Register the external module as a potential collaborator for things loaded later
-        container.addExternalModule("producer", producer);
+        //container.addExternalModule("producer", producer);
 
         // Load the stuff in the xml file - in this case its just a consumer; without the producer having been provided externally, the configuration would have failed
-        container.loadFromXml("samples/ambiguous.xml");
+       // container.loadFromXml("samples/ambiguous.xml");
 
     }
 }

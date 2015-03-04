@@ -12,6 +12,7 @@ import java.util.Map;
 public class Container {
 
     private List<Module> modules = new ArrayList<Module>();
+
     private Map<String, Module> modulesById = new HashMap<String, Module>();
 
     public void add(Module module) {

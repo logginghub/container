@@ -1,9 +1,12 @@
 package com.logginghub.container.samples;
 
 import com.logginghub.container.Container;
-import com.logginghub.container.ContainerBuilderLoader;
-import com.logginghub.container.ContainerJSONLoader;
-import com.logginghub.container.ContainerXMLLoader;
+import com.logginghub.container.loader.ContainerBuilder;
+import com.logginghub.container.loader.ContainerJSONLoader;
+import com.logginghub.container.loader.ContainerXMLLoader;
+import com.logginghub.container.loader.InstantiatingContainerLoader;
+import com.logginghub.container.loader.Instantiator;
+import com.logginghub.container.loader.PojoInstantiator;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -16,25 +19,30 @@ import static org.junit.Assert.assertThat;
 public class TestAmbiguous {
 
     @Test public void test_xml() {
-        ContainerXMLLoader loader = new ContainerXMLLoader();
-        loader.addClassnameResolutionPackage("com.logginghub.container.samples");
+        Instantiator instantiator = new PojoInstantiator();
+        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
+        InstantiatingContainerLoader loader = new InstantiatingContainerLoader(instantiator, new ContainerXMLLoader());
         Container container = loader.loadFromResource("samples/ambiguous.xml");
         validate(container);
     }
 
 
     @Test public void test_json() {
-        ContainerJSONLoader loader = new ContainerJSONLoader();
-        loader.addClassnameResolutionPackage("com.logginghub.container.samples");
+        Instantiator instantiator = new PojoInstantiator();
+        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
+        InstantiatingContainerLoader loader = new InstantiatingContainerLoader(instantiator, new ContainerJSONLoader());
         Container container = loader.loadFromResource("samples/ambiguous.json");
         validate(container);
     }
 
     @Test public void test_builder() {
-        ContainerBuilderLoader loader = new ContainerBuilderLoader();
-        loader.addClassnameResolutionPackage("com.logginghub.container.samples");
+        Instantiator instantiator = new PojoInstantiator();
+        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
+        ContainerBuilder loader = new ContainerBuilder();
+
         loader.add("producer").add("producer").add("consumer").add("consumer");
-        Container container = loader.load();
+        Container container = loader.build();
+        instantiator.instantiate(container);
         validate(container);
     }
 

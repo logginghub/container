@@ -1,10 +1,13 @@
-package com.logginghub.container;
+package com.logginghub.container.loader;
 
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.logginghub.container.ContainerException;
+import com.logginghub.container.Container;
+import com.logginghub.container.Module;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -15,7 +18,7 @@ import java.util.Set;
 /**
  * Created by james on 10/02/15.
  */
-public class ContainerJSONLoader extends ContainerLoaderBase {
+public class ContainerJSONLoader implements ContainerLoader {
 
     public Container loadFromResource(String string) {
         return loadFromStream(ClassLoader.getSystemResourceAsStream(string));
@@ -72,15 +75,10 @@ public class ContainerJSONLoader extends ContainerLoaderBase {
                 container.add(new Module(moduleElement.getAsString()));
             } else {
                 // TODO : make these more descriptive!
-                throw new ContainerException(String.format("Unexpected array element, wasn't an object or primative"));
+                throw new ContainerException(String.format("Unexpected array element, wasn't an object or primitive"));
             }
         }
-
-
-        instantiate(container);
-
         return container;
-
     }
 
 

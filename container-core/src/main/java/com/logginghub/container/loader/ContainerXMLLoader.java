@@ -1,4 +1,7 @@
-package com.logginghub.container;
+package com.logginghub.container.loader;
+
+import com.logginghub.container.Container;
+import com.logginghub.container.Module;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -15,7 +18,7 @@ import java.util.Iterator;
 /**
  * Created by james on 10/02/15.
  */
-public class ContainerXMLLoader extends ContainerLoaderBase {
+public class ContainerXMLLoader implements ContainerLoader {
 
     public Container loadFromResource(String string) {
         return loadFromStream(ClassLoader.getSystemResourceAsStream(string));
@@ -26,65 +29,50 @@ public class ContainerXMLLoader extends ContainerLoaderBase {
     }
 
     public Container loadFromStream(InputStream is) {
-
         final Container container = new Container();
-
-        XMLInputFactory f = XMLInputFactory.newInstance();
-
+        final XMLInputFactory f = XMLInputFactory.newInstance();
         try {
-            XMLEventReader r = f.createXMLEventReader(new InputStreamReader(is));
-
+            final XMLEventReader r = f.createXMLEventReader(new InputStreamReader(is));
             Module currentModule = null;
 
             while (r.hasNext()) {
-                XMLEvent event = r.nextEvent();
-
+                final XMLEvent event = r.nextEvent();
                 if (event.isStartElement()) {
-                    StartElement element = (StartElement) event;
-
-                    String elementName = element.getName().toString();
+                    final StartElement element = (StartElement) event;
+                    final String elementName = element.getName().toString();
 
                     if (elementName.equals("container")) {
 
                     } else {
                         if (currentModule != null) {
                             // This is a sub-element of a module
-
-                            Module.SubElement subElement = new Module.SubElement(elementName);
-
-                            Iterator attributeIterator = element.getAttributes();
+                            final Module.SubElement subElement = new Module.SubElement(elementName);
+                            final Iterator attributeIterator = element.getAttributes();
                             while (attributeIterator.hasNext()) {
-                                Attribute attribute = (Attribute) attributeIterator.next();
-                                String key = attribute.getName().toString();
-                                String value = attribute.getValue();
+                                final Attribute attribute = (Attribute) attributeIterator.next();
+                                final String key = attribute.getName().toString();
+                                final String value = attribute.getValue();
                                 subElement.getAttributes().put(key, value);
                             }
-
                             currentModule.getSubElements().add(subElement);
-
                         } else {
                             currentModule = new Module(elementName);
-
-                            Iterator attributeIterator = element.getAttributes();
+                            final Iterator attributeIterator = element.getAttributes();
                             while (attributeIterator.hasNext()) {
-                                Attribute attribute = (Attribute) attributeIterator.next();
-                                String key = attribute.getName().toString();
-                                String value = attribute.getValue();
+                                final Attribute attribute = (Attribute) attributeIterator.next();
+                                final String key = attribute.getName().toString();
+                                final String value = attribute.getValue();
 
                                 if ("id".equals(key)) {
                                     currentModule.setId(value);
                                 }
-
                                 currentModule.addAttribute(key, value);
-
                             }
                         }
                     }
-
                 } else if (event.isEndElement()) {
-                    EndElement element = (EndElement) event;
-                    String elementName = element.getName().toString();
-
+                    final EndElement element = (EndElement) event;
+                    final String elementName = element.getName().toString();
                     if (elementName.equals("container")) {
 
                     } else if (elementName.equals(currentModule.getName())) {
@@ -94,12 +82,9 @@ public class ContainerXMLLoader extends ContainerLoaderBase {
                 }
 
             }
-
-            instantiate(container);
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-
         return container;
     }
 

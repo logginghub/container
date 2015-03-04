@@ -1,0 +1,10 @@
+<container>
+
+    <producer />
+
+    <consumer></consumer>
+    <producer></producer>
+
+    <consumer />
+
+</container>
