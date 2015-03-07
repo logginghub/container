@@ -6,7 +6,6 @@ import com.logginghub.container.loader.ContainerJSONLoader;
 import com.logginghub.container.loader.ContainerXMLLoader;
 import com.logginghub.container.loader.InstantiatingContainerLoader;
 import com.logginghub.container.loader.Instantiator;
-import com.logginghub.container.loader.PojoInstantiator;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -20,7 +19,7 @@ public class TestBasic {
 
     @Test public void test_xml() {
 
-        Instantiator instantiator = new PojoInstantiator();
+        Instantiator instantiator = new Instantiator();
         instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
         InstantiatingContainerLoader loader = new InstantiatingContainerLoader(instantiator, new ContainerXMLLoader());
 
@@ -32,7 +31,7 @@ public class TestBasic {
 
     @Test public void test_json() {
 
-        Instantiator instantiator = new PojoInstantiator();
+        Instantiator instantiator = new Instantiator();
         instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
         InstantiatingContainerLoader loader = new InstantiatingContainerLoader(instantiator, new ContainerJSONLoader());
 
@@ -43,7 +42,7 @@ public class TestBasic {
 
     @Test public void test_builder() {
 
-        Instantiator instantiator = new PojoInstantiator();
+        Instantiator instantiator = new Instantiator();
         instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
         ContainerBuilder loader = new ContainerBuilder();
 

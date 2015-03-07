@@ -7,6 +7,8 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by chrisspikingdev on 04/03/2015.
  */
@@ -19,6 +21,9 @@ public class TestXmlImporting {
         InputStream baseFile = ClassLoader.getSystemResourceAsStream("samples/basic_import_1a.xml");
         InputStream result = xmlImportResolverPreProcessor.preProcessFromInputStreamToInputStream(baseFile);
         final String resultAsString = IOUtils.toString(result, Charset.defaultCharset());
-        System.out.print(resultAsString);
+
+        InputStream expectedResultIS = ClassLoader.getSystemResourceAsStream("samples/basic_import_1c.xml");
+        final String expectedResultAsString = IOUtils.toString(expectedResultIS, Charset.defaultCharset());
+        assertEquals(expectedResultAsString.replaceAll("\\s",""), resultAsString.replaceAll("\\s",""));
     }
 }

@@ -4,7 +4,6 @@ import com.logginghub.container.Container;
 import com.logginghub.container.loader.ContainerXMLLoader;
 import com.logginghub.container.loader.InstantiatingContainerLoader;
 import com.logginghub.container.loader.Instantiator;
-import com.logginghub.container.loader.PojoInstantiator;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class TestRealistic {
 
     @Test
     public void test_xml() {
-        Instantiator instantiator = new PojoInstantiator();
+        Instantiator instantiator = new Instantiator();
         instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
         InstantiatingContainerLoader loader = new InstantiatingContainerLoader(instantiator, new ContainerXMLLoader());
 

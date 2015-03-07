@@ -6,4 +6,6 @@
 
     <consumer />
 
+    <importContainerFile>samples/basic_import_1b.xml</importContainerFile>
+
 </container>
