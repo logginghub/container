@@ -1,0 +1,8 @@
+{ "container" : [
+  "producer",
+  "importedProducer",
+  "nestedImport_producer",
+  "nestedImport_consumer",
+  "importedConsumer",
+  "consumer"
+] }

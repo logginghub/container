@@ -1,0 +1,5 @@
+{ "container" : [
+  "producer",
+  { "importJsonContainerFile" : "samples/json_import_3_input2.json" },
+  "consumer"
+] }

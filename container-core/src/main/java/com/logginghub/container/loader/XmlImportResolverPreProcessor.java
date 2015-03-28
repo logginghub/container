@@ -20,15 +20,17 @@ import java.util.regex.Pattern;
  */
 public class XmlImportResolverPreProcessor implements PreProcessor {
 
-    private static final String IMPORT_CONTAINER_START = "<importContainerFile>";
-    private static final String IMPORT_CONTAINER_END = "</importContainerFile>";
     private static final String CONTAINER_START = "<container>";
     private static final String CONTAINER_END = "</container>";
 
-    private static final String PATTERN_STRING =
-            IMPORT_CONTAINER_START + "(.*)" + IMPORT_CONTAINER_END;
+    private static final String LONG_IMPORT_PATTERN_STRING =
+            "<importContainerFile>(.*)</importContainerFile>";
 
-    private final Pattern pattern = Pattern.compile(PATTERN_STRING);
+    private static final String SHORT_IMPORT_PATTERN_STRING =
+            "<importContainerFile\\s*file=[\"'](.*)[\"']\\s*/>";
+
+    private final Pattern longImportPattern = Pattern.compile(LONG_IMPORT_PATTERN_STRING);
+    private final Pattern shortImportPattern = Pattern.compile(SHORT_IMPORT_PATTERN_STRING);
 
     @Override
     public InputStream preProcessFromInputStreamToInputStream(InputStream inputStream) {
@@ -46,13 +48,24 @@ public class XmlImportResolverPreProcessor implements PreProcessor {
         }
 
         String resolvedStringSoFar = inputStreamAsString;
-        Matcher matcher = pattern.matcher(resolvedStringSoFar);
-        while(matcher.find()) {
-            final InputStream importedFileAsStream = ClassLoader.getSystemResourceAsStream(matcher.group(1));
+
+        Matcher longFormatMatcher = longImportPattern.matcher(resolvedStringSoFar);
+        Matcher shortFormatMatcher = shortImportPattern.matcher(resolvedStringSoFar);
+        boolean longFormatFound = longFormatMatcher.find();
+        boolean shortFormatFound = shortFormatMatcher.find();
+
+        while(longFormatFound || shortFormatFound) {
+            final Matcher effectiveMatcher = longFormatFound ? longFormatMatcher : shortFormatMatcher;
+            final InputStream importedFileAsStream =
+                    ClassLoader.getSystemResourceAsStream(effectiveMatcher.group(1));
             final String processedImportedFileString =
                     preProcessFromInputStreamToString(importedFileAsStream, true);
-            resolvedStringSoFar = matcher.replaceFirst(processedImportedFileString);
-            matcher = pattern.matcher(resolvedStringSoFar);
+            resolvedStringSoFar = effectiveMatcher.replaceFirst(processedImportedFileString);
+
+            longFormatMatcher = longImportPattern.matcher(resolvedStringSoFar);
+            shortFormatMatcher = shortImportPattern.matcher(resolvedStringSoFar);
+            longFormatFound = longFormatMatcher.find();
+            shortFormatFound = shortFormatMatcher.find();
         }
         return resolvedStringSoFar;
     }

@@ -2,10 +2,10 @@
 
     <producer />
 
-    <importContainerFile>samples/basic_import_1b.xml</importContainerFile>
+    <importContainerFile file="samples/basic_import_1b.xml"/>
 
     <consumer />
 
-    <importContainerFile>samples/basic_import_1b.xml</importContainerFile>
+    <importContainerFile  file='samples/basic_import_1b.xml' />
 
 </container>

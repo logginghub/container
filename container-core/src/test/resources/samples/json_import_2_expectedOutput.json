@@ -1,0 +1,8 @@
+{ "container" : [
+  "importedProducer",
+  "importedConsumer",
+  "producer",
+  "consumer",
+  "importedProducer_secondEdition",
+  "importedConsumer_secondEdition"
+] }
