@@ -21,6 +21,23 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+configurations {
+    deployerJars
+}
+
+dependencies {
+    deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+        repository(url: "scp://mavenrepo@www.vertexlabs.co.uk:/var/www/repository")  {
+            authentication(userName: "mavenrepo", privateKey: System.properties['user.home'] + "/.ssh/id_rsa")
+        }
+    }
+}
+
 // Add the sourceJars to non-extractor modules
 artifacts {
     published sourceJar

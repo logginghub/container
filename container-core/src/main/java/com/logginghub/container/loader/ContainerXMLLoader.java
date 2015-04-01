@@ -52,7 +52,7 @@ public class ContainerXMLLoader implements ContainerLoader {
                                 final Attribute attribute = (Attribute) attributeIterator.next();
                                 final String key = attribute.getName().toString();
                                 final String value = attribute.getValue();
-                                subElement.getAttributes().put(key, value);
+                                subElement.addAttribute(key, value);
                             }
                             currentModule.getSubElements().add(subElement);
                         } else {

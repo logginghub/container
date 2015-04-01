@@ -1,6 +1,7 @@
 package com.logginghub.container.samples;
 
 import com.logginghub.container.Container;
+import com.logginghub.container.samples.fixtures.Producer;
 import org.junit.Test;
 
 /**

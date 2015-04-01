@@ -1,5 +1,7 @@
 package com.logginghub.container;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.Map;
 /**
  * The intermediate model that contains all the information required to instantiate and configure an individual instance
  */
-public class Module {
+public class Module implements Asynchronous {
 
     private final String name;
     private Object instance;
@@ -50,7 +52,9 @@ public class Module {
         return attributes;
     }
 
-    public String getAttribute(String key) { return attributes.get(key); }
+    public String getAttribute(String key) {
+        return attributes.get(key);
+    }
 
     public List<SubElement> getSubElements() {
         return subElements;
@@ -67,13 +71,36 @@ public class Module {
         return sb.toString();
     }
 
+    @Override
+    public void start() {
+        invokeOptionalMethod("start");
+    }
+
+    private void invokeOptionalMethod(String method) {
+        try {
+            Method start = instance.getClass().getMethod(method, new Class[]{});
+            start.invoke(instance);
+        } catch (NoSuchMethodException e) {
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void stop() {
+        invokeOptionalMethod("stop");
+    }
+
     /**
      * Encapsulates sub-element configuration for the module
      */
     public static class SubElement {
         private List<SubElement> subElements = new ArrayList<SubElement>();
 
-        private Map<String, String> attributes = new HashMap<String, String>();
+        private List<Attribute> attributes = new ArrayList<Attribute>();
+        private Map<String, String> attributesMap = new HashMap<String, String>();
 
         private final String name;
 
@@ -89,8 +116,8 @@ public class Module {
             return subElements;
         }
 
-        public Map<String, String> getAttributes() {
-            return attributes;
+        public Map<String, String> getAttributesMap() {
+            return attributesMap;
         }
 
         @Override
@@ -102,5 +129,22 @@ public class Module {
             sb.append('}');
             return sb.toString();
         }
+
+        public void addAttribute(String key, String value) {
+            Attribute attribute = new Attribute();
+            attribute.key = key;
+            attribute.value = value;
+            attributes.add(attribute);
+            attributesMap.put(key, value);
+        }
+
+        public List<Attribute> getAttributes() {
+            return attributes;
+        }
+    }
+
+    public static class Attribute {
+        public String key;
+        public String value;
     }
 }

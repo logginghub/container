@@ -1,4 +1,4 @@
-package com.logginghub.container.samples;
+package com.logginghub.container.samples.fixtures;
 
 import java.util.ArrayList;
 import java.util.List;

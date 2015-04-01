@@ -1,15 +1,11 @@
 package com.logginghub.container;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by james on 10/02/15.
  */
-public class Container {
+public class Container implements Asynchronous {
 
     private List<Module> modules = new ArrayList<Module>();
 
@@ -22,5 +18,21 @@ public class Container {
 
     public List<Module> getModules() {
         return Collections.unmodifiableList(modules);
+    }
+
+    @Override
+    public void start() {
+        for (Module module : modules) {
+            module.start();
+        }
+    }
+
+    @Override
+    public void stop() {
+        ListIterator li = modules.listIterator();
+        while(li.hasPrevious()) {
+            Module module = (Module) li.previous();
+            module.stop();
+        }
     }
 }

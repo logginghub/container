@@ -1,4 +1,4 @@
-package com.logginghub.container.samples;
+package com.logginghub.container.samples.fixtures;
 
 /**
  * Created by james on 25/02/15.

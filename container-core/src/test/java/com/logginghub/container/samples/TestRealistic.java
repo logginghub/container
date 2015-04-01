@@ -4,6 +4,9 @@ import com.logginghub.container.Container;
 import com.logginghub.container.loader.ContainerXMLLoader;
 import com.logginghub.container.loader.InstantiatingContainerLoader;
 import com.logginghub.container.loader.Instantiator;
+import com.logginghub.container.samples.fixtures.MessageConsumer;
+import com.logginghub.container.samples.fixtures.MessageProducer;
+import com.logginghub.container.samples.fixtures.MessageRouter;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,7 +23,7 @@ public class TestRealistic {
     @Test
     public void test_xml() {
         Instantiator instantiator = new Instantiator();
-        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
+        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples.fixtures");
         InstantiatingContainerLoader loader = new InstantiatingContainerLoader(instantiator, new ContainerXMLLoader());
 
         Container container = loader.loadFromResource("samples/realistic.1.xml");

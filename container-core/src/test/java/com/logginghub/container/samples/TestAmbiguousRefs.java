@@ -6,6 +6,8 @@ import com.logginghub.container.loader.ContainerJSONLoader;
 import com.logginghub.container.loader.ContainerXMLLoader;
 import com.logginghub.container.loader.InstantiatingContainerLoader;
 import com.logginghub.container.loader.Instantiator;
+import com.logginghub.container.samples.fixtures.Consumer;
+import com.logginghub.container.samples.fixtures.Producer;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -18,7 +20,7 @@ public class TestAmbiguousRefs {
 
     @Test public void test_xml() {
         Instantiator instantiator = new Instantiator();
-        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
+        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples.fixtures");
         InstantiatingContainerLoader loader = new InstantiatingContainerLoader(instantiator, new ContainerXMLLoader());
 
         Container container = loader.loadFromResource("samples/ambiguous_refs.xml");
@@ -27,7 +29,7 @@ public class TestAmbiguousRefs {
 
     @Test public void test_json() {
         Instantiator instantiator = new Instantiator();
-        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
+        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples.fixtures");
         InstantiatingContainerLoader loader = new InstantiatingContainerLoader(instantiator, new ContainerJSONLoader());
 
         Container container = loader.loadFromResource("samples/ambiguous_refs.json");
@@ -36,7 +38,7 @@ public class TestAmbiguousRefs {
 
     @Test public void test_builder() {
         Instantiator instantiator = new Instantiator();
-        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples");
+        instantiator.addClassnameResolutionPackage("com.logginghub.container.samples.fixtures");
         ContainerBuilder loader = new ContainerBuilder();
 
         loader.addModule("producer");

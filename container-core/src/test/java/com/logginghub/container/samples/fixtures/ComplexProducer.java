@@ -1,4 +1,4 @@
-package com.logginghub.container.samples;
+package com.logginghub.container.samples.fixtures;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
