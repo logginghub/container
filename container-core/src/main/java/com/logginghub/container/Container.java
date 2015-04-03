@@ -30,9 +30,21 @@ public class Container implements Asynchronous {
     @Override
     public void stop() {
         ListIterator li = modules.listIterator();
-        while(li.hasPrevious()) {
+        while (li.hasPrevious()) {
             Module module = (Module) li.previous();
             module.stop();
         }
+    }
+
+    public Module findFirst(Class<?> instanceClass) {
+        Module first = null;
+        for (Module module : modules) {
+            if(instanceClass.isAssignableFrom(module.getInstance().getClass())) {
+                first = module;
+                break;
+            }
+        }
+
+        return first;
     }
 }

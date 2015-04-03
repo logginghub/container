@@ -8,8 +8,8 @@
     <messageConsumer id="cache" writeThroughTo="db"/>
 
     <messageRouter>
-        <route messageProducerRef="web" messageConsumerRef="cache" urlStartsWith="/route1/"/>
-        <route messageProducerRef="web" messageConsumerRef="db" urlStartsWith="/route2/"/>
+        <route messageProducerRef="web" messageConsumerRef="cache" url="/route1/"/>
+        <route messageProducerRef="web" messageConsumerRef="db" url="/route2/"/>
     </messageRouter>
 
 </container>

@@ -52,6 +52,10 @@ public class Module implements Asynchronous {
         return attributes;
     }
 
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
+    }
+
     public String getAttribute(String key) {
         return attributes.get(key);
     }

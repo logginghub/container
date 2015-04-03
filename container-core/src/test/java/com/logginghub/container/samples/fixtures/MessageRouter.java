@@ -13,28 +13,37 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class MessageRouter extends MessageConsumer {
 
     public static class Route {
-        MessageProducer producer;
-        MessageConsumer consumer;
-        String urlStartsWith;
+        String name;
+        MessageProducer source;
+        MessageConsumer destination;
+        String url;
     }
 
     private Set<MessageProducer> subscribedToProducers = new HashSet<MessageProducer>();
     private List<Route> routes = new CopyOnWriteArrayList<Route>();
 
-    public void addRoute(MessageProducer producer, MessageConsumer consumer, @ContainerParam(value = "urlStartsWith") String urlStartsWith) {
-
-        Route route = new Route();
-        route.consumer = consumer;
-        route.producer = producer;
-        route.urlStartsWith = urlStartsWith;
-
+    // CCCT = Concrete config context type
+    public void addRouteAlternative(Route route) {
         routes.add(route);
 
-        if (!subscribedToProducers.contains(producer)) {
-            producer.subscribe(this);
-            subscribedToProducers.add(producer);
+        if (!subscribedToProducers.contains(route.source)) {
+            route.source.subscribe(this);
+            subscribedToProducers.add(route.source);
         }
+    }
 
+    public List<Route> getRoutes() {
+        return routes;
+    }
+
+    public void addRoute(MessageProducer producer, MessageConsumer consumer, @ContainerParam(value = "url") String urlStartsWith) {
+
+        Route route = new Route();
+        route.destination = consumer;
+        route.source = producer;
+        route.url = urlStartsWith;
+
+        addRouteAlternative(route);
     }
 
     @Override
@@ -43,8 +52,8 @@ public class MessageRouter extends MessageConsumer {
         String response = null;
         boolean foundRoute = false;
         for (Route route : routes) {
-            if(message.url.startsWith(route.urlStartsWith)) {
-                response = route.consumer.consume(message);
+            if(message.url.startsWith(route.url)) {
+                response = route.destination.consume(message);
                 foundRoute = true;
                 break;
             }

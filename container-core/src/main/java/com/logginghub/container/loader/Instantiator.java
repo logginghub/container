@@ -7,6 +7,7 @@ import com.logginghub.container.Module;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class Instantiator {
 
     private final List<String> packagePrefixes = new ArrayList<String>();
+    private boolean applyInaccessibleFields = true;
 
     public void addClassnameResolutionPackage(String packagePrefix) {
         packagePrefixes.add(packagePrefix);
@@ -59,10 +61,11 @@ public class Instantiator {
 
                 final String name = module.getName();
 
-                Class<?> resolved = resolveClass(name);
+                Audit audit = new Audit();
+                Class<?> resolved = resolveClass(name, audit);
 
                 if (resolved == null) {
-                    throw new ContainerException(String.format("Failed to resolve module class '%s'", name));
+                    throw new ContainerException(String.format("Failed to resolve module class '%s' : audit '%s'", name, audit.toString()));
                 }
 
                 // TODO : might need to pull in references from other containers/container collections?
@@ -155,6 +158,50 @@ public class Instantiator {
                             break;
                         }
                     }
+
+                    Field[] fields = instanceClass.getDeclaredFields();
+                    for (Field field : fields) {
+                        if (field.getName().equals(key) && field.isAccessible()) {
+                            field.set(instance, coerce(attributeEntry.getValue(), field.getType()));
+                            break;
+                        }
+                    }
+
+                    if (applyInaccessibleFields) {
+                        for (Field field : fields) {
+                            if (field.getName().equals(key)) {
+                                boolean fieldAccessibility = field.isAccessible();
+
+                                if (!fieldAccessibility) {
+                                    field.setAccessible(true);
+                                }
+
+                                Object potentialArgumentValue = findCollaboratorWithIdOrName(field.getType(),
+                                                                                             attributeEntry.getValue(),
+                                                                                             potentialCollaborators);
+
+                                if (potentialArgumentValue == null) {
+                                    try {
+                                        potentialArgumentValue = coerce(attributeEntry.getValue(), field.getType());
+                                    } catch (IllegalArgumentException e) {
+                                        throw new RuntimeException(String.format("Failed to set field '%s' of type '%s' to value '%s'",
+                                                                                 key,
+                                                                                 field.getType(),
+                                                                                 attributeEntry.getValue()));
+                                    }
+                                }
+
+                                field.set(instance, potentialArgumentValue);
+
+                                if (!fieldAccessibility) {
+                                    field.setAccessible(false);
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
@@ -179,15 +226,17 @@ public class Instantiator {
 
             for (Method declaredMethod : declaredMethods) {
                 if (declaredMethod.getName().equals(addMethodName)) {
+
+                    boolean viable = true;
+                    Class<?>[] parameterTypes = declaredMethod.getParameterTypes();
+                    Object[] potentialArguments = new Object[parameterTypes.length];
+
                     // Have we got enough potential arguments?
                     if (declaredMethod.getParameterCount() == subElement.getAttributesMap().size()) {
 
                         // Great, lets see if they can fit the required types
-                        boolean viable = true;
 
-                        Class<?>[] parameterTypes = declaredMethod.getParameterTypes();
                         Annotation[][] parametersAnnotations = declaredMethod.getParameterAnnotations();
-                        Object[] potentialArguments = new Object[parameterTypes.length];
 
                         for (int i = 0; i < parameterTypes.length; i++) {
 
@@ -247,46 +296,35 @@ public class Instantiator {
                             }
                         }
 
-                        // Try and approach based on matching the parameters in order
-                        // jshaw - fails because attribute order in xml is not something the spec says should be maintained - yay for vague
-                        // specifications
-                        //                        if(!viable) {
-                        //                            viable = true;
-                        //
-                        //                            for (int i = 0; i < parameterTypes.length; i++) {
-                        //
-                        //                                final Class<?> parameterType = parameterTypes[i];
-                        //                                String attributeValue = subElement.getAttributes().get(i).value;
-                        //
-                        //                                Attribute value could be a coercable primitive, or maybe a reference to a module?
-                        //                                Object potentialArgumentValue = findCollaboratorWithIdOrName(parameterType,
-                        // attributeValue, potentialCollaborators);
-                        //                                if(potentialArgumentValue == null) {
-                        //                                    Maybe its a primitive then
-                        //                                    try {
-                        //                                        potentialArgumentValue = coerce(attributeValue, parameterType);
-                        //                                    }catch(IllegalArgumentException e) {
-                        //                                        viable = false;
-                        //                                        break;
-                        //                                    }
-                        //
-                        //
-                        //                                }
-                        //
-                        //                                potentialArguments[i] = potentialArgumentValue;
-                        //                            }
-                        //                        }
+                    } else if (declaredMethod.getParameterCount() == 1) {
+                        // It could be a CCCT? (a concrete config context type)
+                        Class<?> aClass = declaredMethod.getParameterTypes()[0];
+                        Field[] declaredFields = aClass.getDeclaredFields();
 
-                        if (viable) {
-                            try {
-                                declaredMethod.invoke(instance, potentialArguments);
-                                successfullyApplied = true;
-                                break;
-                            } catch (IllegalAccessException e) {
-                                throw new ContainerException(String.format("Failed to configure '%s'", module), e);
-                            } catch (InvocationTargetException e) {
-                                throw new ContainerException(String.format("Failed to configure '%s'", module), e);
-                            }
+                        if (declaredFields.length == subElement.getAttributesMap().size()) {
+                            // Could be a contender - lets try and instantiate one of these things
+
+                            Module temp = new Module("temp");
+                            temp.setAttributes(subElement.getAttributesMap());
+                            Object subElementInstance = createInstance(aClass, temp, potentialCollaborators);
+                            temp.setInstance(subElementInstance);
+                            configure(temp, potentialCollaborators);
+
+                            potentialArguments[0] = subElementInstance;
+                            viable = true;
+                        }
+
+                    }
+
+                    if (viable) {
+                        try {
+                            declaredMethod.invoke(instance, potentialArguments);
+                            successfullyApplied = true;
+                            break;
+                        } catch (IllegalAccessException e) {
+                            throw new ContainerException(String.format("Failed to configure '%s'", module), e);
+                        } catch (InvocationTargetException e) {
+                            throw new ContainerException(String.format("Failed to configure '%s'", module), e);
                         }
                     }
                 }
@@ -370,19 +408,22 @@ public class Instantiator {
         return found;
     }
 
-    private Class<?> resolveClass(String name) {
+    private Class<?> resolveClass(String name, Audit audit) {
 
         String fixedName = capitalise(name);
 
         Class<?> resolved = null;
 
         // Check to see if it is fully qualified already
+        String div = "";
         try {
+            audit.append("Is it a fully qualified class? : ", fixedName);
             resolved = Class.forName(fixedName);
         } catch (ClassNotFoundException e) {
             // Nope, so try the resolution packages
             for (String packagePrefix : packagePrefixes) {
                 String attemptedName = packagePrefix + "." + fixedName;
+                audit.append("Is it in this package : ", attemptedName);
                 try {
                     resolved = Class.forName(attemptedName);
                     break;
@@ -402,5 +443,11 @@ public class Instantiator {
         return Character.toLowerCase(name.charAt(0)) + name.substring(1);
     }
 
+    public void setApplyInaccessibleFields(boolean applyInaccessibleFields) {
+        this.applyInaccessibleFields = applyInaccessibleFields;
+    }
 
+    public boolean isApplyInaccessibleFields() {
+        return applyInaccessibleFields;
+    }
 }

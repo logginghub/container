@@ -1,6 +1,21 @@
+//buildscript {
+//    repositories {
+//        mavenLocal()
+//    }
+//    dependencies {
+//        classpath group: 'com.marketstreamer', name: 'continuousbuild', version: '0.0.1'
+//    }
+//}
+
+
 plugins {
     id "com.jfrog.bintray" version "1.0"
 }
+
+apply plugin: 'groovy'
+apply plugin: 'announce'
+//apply plugin: 'marketstreamer-continuousbuild'
+apply plugin: 'build-announcements'
 
 dependencies {
     compile("com.google.code.gson:gson:2.2.4")
@@ -106,3 +121,36 @@ bintray {
 //            }
 //        }
 //    }
+
+//
+//watchdog {
+//    tasks = ['test', 'build']
+//    dirs = sourceSets*.allSource*.srcDirs.flatten()
+//    cooldownTime = 1000
+//}
+
+
+test.addTestListener(new TestListener() {
+    @Override
+    void beforeSuite(TestDescriptor testDescriptor) {
+
+
+    }
+
+    @Override
+    void afterSuite(TestDescriptor testDescriptor, TestResult testResult) {
+
+    }
+
+    @Override
+    void beforeTest(TestDescriptor testDescriptor) {
+
+    }
+
+    @Override
+    void afterTest(TestDescriptor testDescriptor, TestResult testResult) {
+        if(testResult.getResultType() == TestResult.ResultType.FAILURE) {
+            announce.announce("Test: ${testDescriptor.getClassName().replace(".", ". ")}\n ${testDescriptor.getName()}\nFAILED", "local");
+        }
+    }
+})
