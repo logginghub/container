@@ -108,6 +108,11 @@ public class Module implements Asynchronous {
 
         private final String name;
 
+        /**
+         * Used for xml characters <tag>characters</tag> approach
+         */
+        private String subElementValue;
+
         public SubElement(String name) {
             this.name = name;
         }
@@ -144,6 +149,14 @@ public class Module implements Asynchronous {
 
         public List<Attribute> getAttributes() {
             return attributes;
+        }
+
+        public void setSubElementValue(String subElementValue) {
+            this.subElementValue = subElementValue;
+        }
+
+        public String getSubElementValue() {
+            return subElementValue;
         }
     }
 

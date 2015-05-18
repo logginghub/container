@@ -6,10 +6,7 @@ import com.logginghub.container.Module;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.events.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +31,7 @@ public class ContainerXMLLoader implements ContainerLoader {
         try {
             final XMLEventReader r = f.createXMLEventReader(new InputStreamReader(is));
             Module currentModule = null;
+            Module.SubElement currentSubElement = null;
 
             while (r.hasNext()) {
                 final XMLEvent event = r.nextEvent();
@@ -54,6 +52,7 @@ public class ContainerXMLLoader implements ContainerLoader {
                                 final String value = attribute.getValue();
                                 subElement.addAttribute(key, value);
                             }
+                            currentSubElement = subElement;
                             currentModule.getSubElements().add(subElement);
                         } else {
                             currentModule = new Module(elementName);
@@ -79,6 +78,15 @@ public class ContainerXMLLoader implements ContainerLoader {
                         container.add(currentModule);
                         currentModule = null;
                     }
+
+                    currentSubElement = null;
+                } else if(event.isCharacters()) {
+                    final Characters characters = (Characters) event;
+                    String value = characters.getData();
+                    if(currentSubElement != null) {
+                        currentSubElement.setSubElementValue(value);
+                    }
+
                 }
 
             }

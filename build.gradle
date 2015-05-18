@@ -1,6 +1,6 @@
 
 
-String buildVersion = '0.0.2';
+String buildVersion = '0.0.4';
 
 subprojects {
 

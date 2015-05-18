@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Looks for <importContainer>containerFileLocation</importContainer> and expands the contents
+ * Looks for {@code <importContainer>containerFileLocation</importContainer> } and expands the contents
  * of that file (and any recursively referenced file imports).
  *
  * Currently the file location will be treated as a System Resource, so should be referenced

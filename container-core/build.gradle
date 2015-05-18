@@ -13,9 +13,9 @@ plugins {
 }
 
 apply plugin: 'groovy'
-apply plugin: 'announce'
+//apply plugin: 'announce'
 //apply plugin: 'marketstreamer-continuousbuild'
-apply plugin: 'build-announcements'
+//apply plugin: 'build-announcements'
 
 dependencies {
     compile("com.google.code.gson:gson:2.2.4")
@@ -129,28 +129,28 @@ bintray {
 //    cooldownTime = 1000
 //}
 
-
-test.addTestListener(new TestListener() {
-    @Override
-    void beforeSuite(TestDescriptor testDescriptor) {
-
-
-    }
-
-    @Override
-    void afterSuite(TestDescriptor testDescriptor, TestResult testResult) {
-
-    }
-
-    @Override
-    void beforeTest(TestDescriptor testDescriptor) {
-
-    }
-
-    @Override
-    void afterTest(TestDescriptor testDescriptor, TestResult testResult) {
-        if(testResult.getResultType() == TestResult.ResultType.FAILURE) {
-            announce.announce("Test: ${testDescriptor.getClassName().replace(".", ". ")}\n ${testDescriptor.getName()}\nFAILED", "local");
-        }
-    }
-})
+//
+//test.addTestListener(new TestListener() {
+//    @Override
+//    void beforeSuite(TestDescriptor testDescriptor) {
+//
+//
+//    }
+//
+//    @Override
+//    void afterSuite(TestDescriptor testDescriptor, TestResult testResult) {
+//
+//    }
+//
+//    @Override
+//    void beforeTest(TestDescriptor testDescriptor) {
+//
+//    }
+//
+//    @Override
+//    void afterTest(TestDescriptor testDescriptor, TestResult testResult) {
+//        if(testResult.getResultType() == TestResult.ResultType.FAILURE) {
+//            announce.announce("Test: ${testDescriptor.getClassName().replace(".", ". ")}\n ${testDescriptor.getName()}\nFAILED", "local");
+//        }
+//    }
+//})
